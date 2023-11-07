@@ -543,7 +543,7 @@ void main() {
 	cout << frigider3.getDimensiuneRaft(0) << endl;
 
 	Frigider frigider5;
-	frigider5.operator=(frigider2);
+	frigider5=frigider2;
 	frigider5.afisare();
 
 	Frigider rezultat = frigider3 + frigider4;
@@ -594,7 +594,7 @@ void main() {
 	cout << endl;
 
 	MasinaSpalat masina5;
-	masina5.operator=(masina2);
+	masina5=masina2;
 	masina5.afisare();
 
 	masina3+=masina4;
@@ -652,7 +652,7 @@ void main() {
 	cout << micro2.getPret(2) << endl;
 
 	Microunde micro5;
-	micro5.operator=(micro2);
+	micro5=micro2;
 	micro5.afisare();
 
 	cin >> micro3;
