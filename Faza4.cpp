@@ -160,13 +160,31 @@ public:
 
 	friend ostream& operator<<(ostream& out, const Frigider& f);
 
+	friend istream& operator>>(istream& in, Frigider& f) {
+		cout << "Model: ";
+		in >> f.model;
+		cout << "Pret: ";
+		in >> f.pret;
+		cout << "Numar de rafturi: ";
+		in >> f.nrRafturi;
+		if (f.dimensiuneRaft != NULL)
+			delete[]f.dimensiuneRaft;
+		f.dimensiuneRaft = new float[f.nrRafturi];
+		for (int i = 0; i < f.nrRafturi; i++) {
+			cout << "Dimensiunea raftului " << i + 1 << ": ";
+			in >> f.dimensiuneRaft[i];
+		}
+		cout << endl;
+		return in;
+	}
+
 };
 string Frigider::clasaEnergetica = "A+";
 
 ostream& operator<<(ostream& out, const Frigider& f) {
-	out << "ID: " << f.id << endl;
-	out << "Pret: " << f.pret << endl;
-	out << "Model: " << f.model << endl;
+	out << "ID: " << f.id<<endl;
+	out << "Pret: " << f.pret<<endl;
+	out << "Model: " << f.model<<endl;
 	out << "Numar rafturi: " << f.nrRafturi << endl;
 	if (f.nrRafturi == 0)
 		out << "Niciun raft";
@@ -323,9 +341,49 @@ public:
 	}
 
 	friend void afisareVanzari(const MasinaSpalat& m);
+
+	friend istream& operator>>(istream& in, MasinaSpalat& m) {
+		cout << "Model: ";
+		in >> m.model;
+		cout << "RPM: ";
+		in >> m.RPM;
+		cout << "Numar vanzari: ";
+		in >> m.nrVanzari;
+		if (m.luniVanzari != NULL)
+			delete[]m.luniVanzari;
+		m.luniVanzari = new string[m.nrVanzari];
+		for (int i = 0; i < m.nrVanzari; i++) {
+			cout << "A " << i + 1 << "-a luna de vanzare: ";
+			in >> m.luniVanzari[i];
+		}
+		cout << endl;
+		return in;
+	}
+
+	friend ostream& operator<<(ostream& out, const MasinaSpalat& m){
+		out << "Model: " << m.model<<endl;
+		out << "RPM: " << m.RPM<<endl;
+		out << "Numar vanzari: " << m.nrVanzari << endl;
+		if (m.nrVanzari == 0)
+			out << "Nicio vanzare";
+		else
+		{
+			out << "Lunile in care s-au vandut: ";
+			for (int i = 0; i < m.nrVanzari; i++)
+				out << m.luniVanzari[i] << ", ";
+		}
+		out << endl;
+		out << "An fabricatie: " << m.anFabricatie << endl;
+		out << "TVA: " << m.TVA << endl;
+		return out;
+}
+
+
 };
 float MasinaSpalat::TVA = 0.19;
 
+
+	
 class Microunde {
 private:
 	const int id;
@@ -452,9 +510,9 @@ public:
 	friend istream& operator>>(istream& in, Microunde& mic) {
 		cout << "Brand: ";
 		in >> mic.brand;
-		cout << "\nPutere: ";
+		cout << "Putere: ";
 		in >> mic.putere;
-		cout << "\nNumar de modele: ";
+		cout << "Numar de modele: ";
 		in >> mic.nrModele;
 		if (mic.pret != NULL)
 			delete[]mic.pret;
@@ -467,16 +525,24 @@ public:
 		return in;
 	}
 
-	friend ostream& operator<<(ostream& out, const Microunde mic) {
-		out << "Firma " << mic.id << " de brand " << mic.brand << " are cuptoare cu microunde cu puterea de " << mic.putere << " W. Are " << mic.nrModele << " modele. Preturile cuptoarelor cu microunde sunt: ";
+	friend ostream& operator<<(ostream& out, const Microunde& mic) {
+		out << "ID: " << mic.id << endl;
+		out << "Brand: " << mic.brand<<endl;
+		out << "Putere: " << mic.putere<<endl;
+		out << "Numar de modele: " << mic.nrModele << endl;
 		if (mic.nrModele == 0)
-			out << "-";
+			out << "Nu exista modele";
 		else
+		{
+			out << "Preturi: ";
 			for (int i = 0; i < mic.nrModele; i++)
 				out << mic.pret[i] << ", ";
-		out << "Garantia lor este de " << garantie << " ani" << endl;
+		}
+		out << endl;
+		out << "Garantie: " << mic.garantie<<" ani" << endl;
 		return out;
-	}
+		}
+	
 
 	friend float calculPretMediu(const Microunde& micro);
 
@@ -554,6 +620,23 @@ void main() {
 
 	cout << frigider3 << endl;
 
+	int nrFrigidere;
+	cout << "Introduceti numarul de frigidere: ";
+	cin >> nrFrigidere;
+	Frigider* vectorFrigidere = new Frigider[nrFrigidere];
+
+	for (int i = 0; i < nrFrigidere; i++) {
+		cout << "Detalii frigider " << i + 1 <<":" <<endl;
+		cin >> vectorFrigidere[i];
+	}
+
+	for (int i = 0; i < nrFrigidere; i++) {
+		cout << vectorFrigidere[i] << endl;
+	}
+
+	delete[]vectorFrigidere;
+
+
 	MasinaSpalat::setTVA(0.21);
 
 	MasinaSpalat masina1;
@@ -612,6 +695,23 @@ void main() {
 	cout << "Masina 6: " << masina6.getRPM()<<" RPM"<<endl;
 
 	afisareVanzari(masina3);
+	cout << endl;
+
+	int nrMasini;
+	cout << "Inroduceti numarul de masini de spalat: ";
+	cin >> nrMasini;
+
+	MasinaSpalat* vectormasini = new MasinaSpalat[nrMasini];
+	for (int i = 0; i < nrMasini; i++) {
+		cout << "Detalii masina de spalat " << i + 1 << ": "<<endl;
+		cin >> vectormasini[i];
+	}
+
+	for (int i = 0; i < nrMasini; i++) {
+		cout << vectormasini[i] << endl;
+	}
+
+	delete[]vectormasini;
 
 
 	Microunde::setGarantie(3);
@@ -660,7 +760,48 @@ void main() {
 
 	float pretMediu = calculPretMediu(micro3);
 	cout << "Pretul mediu al microundelor este: " << pretMediu << endl;
-	cout << "Al 3-lea microunde are pretul de: "<<micro3[2] << endl;
+	cout << "Al 2-lea microunde are pretul de: "<<micro3[1] << endl;
+
+	int nrMicro;
+	cout << "Introduceti numarul de cuptoare cu microunde: ";
+	cin >> nrMicro;
+	Microunde* vectorMicro=new Microunde[nrMicro];
+	for (int i = 0; i < nrMicro; i++) {
+		cout << "Detalii cuptor cu microunde " << i + 1 << ": " << endl;
+		cin >> vectorMicro[i];
+	}
+
+	for (int i = 0; i < nrMicro; i++) {
+		cout << vectorMicro[i]<<endl;
+	}
+	
+	delete[]vectorMicro;
+
+	int nrLinii, nrColoane;
+	cout << "Introduceti numarul de linii a matricei de obiecte a clasei Frigider: ";
+	cin >> nrLinii;
+	cout<<"Introduceti numarul de coloane a matricei de obiecte a clasei Frigider: ";
+	cin >> nrColoane;
+	Frigider** matriceF = new Frigider* [nrLinii];
+	for (int i = 0; i < nrLinii; i++) {
+		matriceF[i] = new Frigider[nrColoane];
+	}
+
+	for (int i = 0; i < nrLinii; i++) {
+		for (int j = 0; j < nrColoane; j++) {
+			cout << "Introduceti detaliile frigiderului [" << i + 1 << "][" << j + 1 << "]:\n";
+			cin >> matriceF[i][j];
+
+		}
+	}
+
+	for (int i = 0; i < nrLinii; i++) {
+		for (int j = 0; j < nrColoane; j++) {
+			cout << "Frigider [" << i + 1 << "][" << j + 1 << "]:\n";
+			cout << matriceF[i][j];
+		}
+	}
+
 
 
 }
