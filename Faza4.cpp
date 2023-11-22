@@ -574,6 +574,130 @@ float calculPretMediu(const Microunde& micro) {
 }
 
 
+class MagazinElectrocasnice {
+private:
+	const int id;
+	int nrFrigidere;
+	Frigider* frigider;
+	MasinaSpalat masinaSpalat;
+	Microunde microunde;
+	string numeMagazin;
+public:
+	MagazinElectrocasnice() :id(0) {
+		this->numeMagazin = "-";
+		this->frigider = NULL;
+
+	}
+
+	MagazinElectrocasnice(int id, string numeMagazin, int nrFrigidere, Frigider* frigider, MasinaSpalat masinaSpalat, Microunde microunde) :id(id) {
+		this->numeMagazin = numeMagazin;
+		this->masinaSpalat = masinaSpalat;
+		this->microunde = microunde;
+		this->nrFrigidere = nrFrigidere;
+		this->frigider = new Frigider[nrFrigidere];
+		for (int i = 0; i < nrFrigidere; i++) {
+			this->frigider[i] = frigider[i];
+		}
+	}
+
+	~MagazinElectrocasnice() {
+		if (this->frigider != NULL) {
+			delete[]this->frigider;
+		}
+	}
+
+	MagazinElectrocasnice& operator=(const MagazinElectrocasnice& me) {
+		if (this != &me) {
+			if (this->frigider != NULL) {
+				delete[]this->frigider;
+			}
+			this->numeMagazin = me.numeMagazin;
+			this->masinaSpalat = me.masinaSpalat;
+			this->microunde = me.microunde;
+			this->nrFrigidere = me.nrFrigidere;
+			this->frigider = new Frigider[nrFrigidere];
+			for (int i = 0; i < nrFrigidere; i++) {
+				this->frigider[i] = me.frigider[i];
+			}
+		}
+		return *this;
+	}
+
+	int getId() {
+		return this->id;
+	}
+
+	void setNumeMagazin(string numeMagazin) {
+		this->numeMagazin = numeMagazin;
+	}
+
+	string getNumeMagazin() {
+		return this->numeMagazin;
+	}
+
+	void setNrFrigidere(int nrFrigidere, Frigider* frigider) {
+		if (nrFrigidere > 0) {
+			this->nrFrigidere = nrFrigidere;
+			if (this->frigider != NULL) {
+				delete[]this->frigider;
+			}
+			this->frigider = new Frigider[nrFrigidere];
+			for (int i = 0; i < nrFrigidere; i++)
+				this->frigider[i] = frigider[i];
+		}
+	}
+
+	int getNrFrigidere(){
+		return this->nrFrigidere;
+	}
+
+	Frigider* getFrigider() {
+		return this->frigider;
+	}
+
+	void setMasinaSpalat(const MasinaSpalat& masinaSpalat) {
+		this->masinaSpalat = masinaSpalat;
+	}
+
+	MasinaSpalat getMasinaSpalat() {
+		return this->masinaSpalat;
+	}
+
+	void setMicrounde(const Microunde& microunde) {
+		this->microunde = microunde;
+	}
+
+	Microunde getMicrounde() {
+		return this->microunde;
+	}
+
+
+	void afisare() {
+		cout << "Magazinul de electrocasnice cu id-ul " << id << " se numeste " << numeMagazin << ". Acesta are in stoc " << nrFrigidere << " frigidere. Frigiderele sunt: " << endl;
+		if (nrFrigidere == 0)
+			cout << "-";
+		else
+			for (int i = 0; i < nrFrigidere; i++)
+				cout << frigider[i];
+		cout << "Mai are de asemenea microunde" << microunde << endl;
+		cout<<" si masini de spalat" << masinaSpalat<<endl;
+
+	}
+
+	Frigider& operator[](int index) {
+		if (index >= 0 && index < nrFrigidere) {
+			return this->frigider[index];
+		}
+	}
+
+	bool operator>(MagazinElectrocasnice magazin) {
+		return this->nrFrigidere > magazin.nrFrigidere;
+	}
+
+
+};
+
+
 void main() {
 	Frigider::setclasaEnergetica("C");
 
@@ -620,7 +744,7 @@ void main() {
 
 	cout << frigider3 << endl;
 
-	int nrFrigidere;
+	/*int nrFrigidere;
 	cout << "Introduceti numarul de frigidere: ";
 	cin >> nrFrigidere;
 	Frigider* vectorFrigidere = new Frigider[nrFrigidere];
@@ -634,7 +758,7 @@ void main() {
 		cout << vectorFrigidere[i] << endl;
 	}
 
-	delete[]vectorFrigidere;
+	delete[]vectorFrigidere;*/
 
 
 	MasinaSpalat::setTVA(0.21);
@@ -697,7 +821,7 @@ void main() {
 	afisareVanzari(masina3);
 	cout << endl;
 
-	int nrMasini;
+	/*int nrMasini;
 	cout << "Inroduceti numarul de masini de spalat: ";
 	cin >> nrMasini;
 
@@ -711,7 +835,7 @@ void main() {
 		cout << vectormasini[i] << endl;
 	}
 
-	delete[]vectormasini;
+	delete[]vectormasini;*/
 
 
 	Microunde::setGarantie(3);
@@ -760,48 +884,83 @@ void main() {
 
 	float pretMediu = calculPretMediu(micro3);
 	cout << "Pretul mediu al microundelor este: " << pretMediu << endl;
-	cout << "Al 2-lea microunde are pretul de: "<<micro3[1] << endl;
+	cout << "Primul microunde are pretul de: "<<micro3[0] << endl;
 
-	int nrMicro;
-	cout << "Introduceti numarul de cuptoare cu microunde: ";
-	cin >> nrMicro;
-	Microunde* vectorMicro=new Microunde[nrMicro];
-	for (int i = 0; i < nrMicro; i++) {
-		cout << "Detalii cuptor cu microunde " << i + 1 << ": " << endl;
-		cin >> vectorMicro[i];
+	//int nrMicro;
+	//cout << "Introduceti numarul de cuptoare cu microunde: ";
+	//cin >> nrMicro;
+	//Microunde* vectorMicro=new Microunde[nrMicro];
+	//for (int i = 0; i < nrMicro; i++) {
+	//	cout << "Detalii cuptor cu microunde " << i + 1 << ": " << endl;
+	//	cin >> vectorMicro[i];
+	//}
+
+	//for (int i = 0; i < nrMicro; i++) {
+	//	cout << vectorMicro[i]<<endl;
+	//}
+	//
+	//delete[]vectorMicro;
+
+	//int nrLinii, nrColoane;
+	//cout << "Introduceti numarul de linii a matricei de obiecte a clasei Frigider: ";
+	//cin >> nrLinii;
+	//cout<<"Introduceti numarul de coloane a matricei de obiecte a clasei Frigider: ";
+	//cin >> nrColoane;
+	//Frigider** matriceF = new Frigider* [nrLinii];
+	//for (int i = 0; i < nrLinii; i++) {
+	//	matriceF[i] = new Frigider[nrColoane];
+	//}
+
+	//for (int i = 0; i < nrLinii; i++) {
+	//	for (int j = 0; j < nrColoane; j++) {
+	//		cout << "Introduceti detaliile frigiderului [" << i + 1 << "][" << j + 1 << "]:\n";
+	//		cin >> matriceF[i][j];
+
+	//	}
+	//}
+
+	//for (int i = 0; i < nrLinii; i++) {
+	//	for (int j = 0; j < nrColoane; j++) {
+	//		cout << "Frigider [" << i + 1 << "][" << j + 1 << "]:\n";
+	//		cout << matriceF[i][j];
+	//	}
+	//}
+
+	MagazinElectrocasnice me1;
+	me1.afisare();
+	
+	Frigider* frigidere = new Frigider[2]{ frigider3,frigider4 };
+	MagazinElectrocasnice me2(1, "Flanco", 2, frigidere, masina3, micro2);
+	me2.afisare();
+
+	MagazinElectrocasnice me3;
+	me3 = me2;
+	me3.afisare();
+
+	cout<<"Id magazin: "<<me2.getId() << endl;
+	me2.setNumeMagazin("Altex");
+	cout<<"Nume magazin: "<<me2.getNumeMagazin() << endl;
+	me2.setMasinaSpalat(masina2);
+	cout<<"Masina de spalat: "<<endl<<me2.getMasinaSpalat() << endl;
+	me2.setMicrounde(micro3);
+	cout<<"Cuptorul cu microunde: "<<endl<<me2.getMicrounde() << endl;
+	Frigider* vectF = new Frigider[3]{ frigider2,frigider3,frigider4 };
+	me2.setNrFrigidere(3,vectF);
+	cout << "Frigiderul 1: " << endl<<me2.getFrigider()[0] << endl;
+	cout << "Frigiderul 2: " << endl << me2.getFrigider()[1] << endl;
+	cout << "Frigiderul 3: " << endl << me2.getFrigider()[2] << endl;
+
+	if (me1 > me2) {
+		cout << "Magazinul 1 are mai multe frigidere decat magazinul 2";
 	}
-
-	for (int i = 0; i < nrMicro; i++) {
-		cout << vectorMicro[i]<<endl;
+	else {
+		cout << "Magazinul 2 are mai multe frigidere decat magazinul 1";
 	}
 	
-	delete[]vectorMicro;
 
-	int nrLinii, nrColoane;
-	cout << "Introduceti numarul de linii a matricei de obiecte a clasei Frigider: ";
-	cin >> nrLinii;
-	cout<<"Introduceti numarul de coloane a matricei de obiecte a clasei Frigider: ";
-	cin >> nrColoane;
-	Frigider** matriceF = new Frigider* [nrLinii];
-	for (int i = 0; i < nrLinii; i++) {
-		matriceF[i] = new Frigider[nrColoane];
-	}
-
-	for (int i = 0; i < nrLinii; i++) {
-		for (int j = 0; j < nrColoane; j++) {
-			cout << "Introduceti detaliile frigiderului [" << i + 1 << "][" << j + 1 << "]:\n";
-			cin >> matriceF[i][j];
-
-		}
-	}
-
-	for (int i = 0; i < nrLinii; i++) {
-		for (int j = 0; j < nrColoane; j++) {
-			cout << "Frigider [" << i + 1 << "][" << j + 1 << "]:\n";
-			cout << matriceF[i][j];
-		}
-	}
-
-
+	delete[]vectF;
+	
+	
+	
 
 }
