@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -178,6 +179,37 @@ public:
 		return in;
 	}
 
+	 void scriereBinarFrigider(fstream& f) {
+		int lungimeModel = model.length();
+		f.write((char*)&lungimeModel, sizeof(int));
+		f.write(model.c_str(), lungimeModel + 1);
+		f.write((char*)&this->pret, sizeof(float));
+		f.write((char*)&this->nrRafturi, sizeof(int));
+		for (int i = 0; i < nrRafturi; i++) {
+			f.write((char*)&this->dimensiuneRaft[i], sizeof(float)) ;
+		}
+	}
+
+	 void citireBinarFrigider(fstream& f) {
+		 int lungime;
+		 f.read((char*)&lungime, sizeof(int));
+		 char* bufferModel = new char[lungime + 1];
+		 f.read(bufferModel, lungime + 1);
+		 this->model = bufferModel;
+		 delete[]bufferModel;
+		 f.read((char*)&this->pret, sizeof(float));
+		 f.read((char*)&this->nrRafturi, sizeof(int));
+		 if (this->dimensiuneRaft != NULL) {
+			 delete[]this->dimensiuneRaft;
+		 }
+		 this->dimensiuneRaft = new float[nrRafturi];
+		 for (int i = 0; i < nrRafturi; i++)
+		 {
+			 f.read((char*)&this->dimensiuneRaft[i], sizeof(float));
+		 }
+	 }
+
+
 };
 string Frigider::clasaEnergetica = "A+";
 
@@ -197,6 +229,8 @@ ostream& operator<<(ostream& out, const Frigider& f) {
 	out << "Clasa energetica: " << f.clasaEnergetica << endl;
 	return out;
 }
+
+
 
 class MasinaSpalat {
 private:
@@ -378,11 +412,23 @@ public:
 		return out;
 }
 
+	friend ifstream& operator>>(ifstream& in, MasinaSpalat& m);
 
 };
 float MasinaSpalat::TVA = 0.19;
 
+ifstream& operator>>(ifstream& in, MasinaSpalat& m) {
+	in >> m.model;
+	in >> m.RPM;
+	in >> m.nrVanzari;
+	if (m.luniVanzari != NULL)
+		delete[]m.luniVanzari;
+m.luniVanzari = new string[m.nrVanzari];
+	for (int i = 0; i < m.nrVanzari; i++) 
+		in >> m.luniVanzari[i];
+	return in;
 
+}
 	
 class Microunde {
 private:
@@ -546,10 +592,60 @@ public:
 
 	friend float calculPretMediu(const Microunde& micro);
 
+	friend ifstream& operator>>(ifstream& in, Microunde& m) {
+		in >> m.brand;
+		in >> m.putere;
+		in >> m.nrModele;
+		if (m.pret != NULL)
+			delete[]m.pret;
+		m.pret = new float[m.nrModele];
+		for (int i = 0; i < m.nrModele; i++) {
+			in >> m.pret[i];
+		}
+		return in;
+	}
+
+	friend ofstream& operator<<(ofstream& out, const Microunde& mic) {
+		out<<endl<< mic.brand << endl << mic.putere << endl << mic.nrModele<<endl ;
+			for (int i = 0; i < mic.nrModele; i++)
+				out << mic.pret[i] << " ";
+			out << endl;
+			return out;
+	}
+
+	void scriereBinarMicrounde(fstream& f) {
+		int lungimeBrand = brand.length();
+		f.write((char*)&lungimeBrand, sizeof(int));
+		f.write(brand.c_str(), lungimeBrand+ 1);
+		f.write((char*)&this->putere, sizeof(int));
+		f.write((char*)&this->nrModele, sizeof(int));
+		for (int i = 0; i < nrModele; i++) {
+			f.write((char*)&this->pret[i], sizeof(float));
+		}
+	}
+
+	void citireBinarMicrounde(fstream& f) {
+		int lungime;
+		f.read((char*)&lungime, sizeof(int));
+		char* bufferBrand = new char[lungime + 1];
+		f.read(bufferBrand, lungime + 1);
+		this->brand = bufferBrand;
+		delete[]bufferBrand;
+		f.read((char*)&this->putere, sizeof(int));
+		f.read((char*)&this->nrModele, sizeof(int));
+		if (this->pret != NULL) {
+			delete[]this->pret;
+		}
+		this->pret = new float[nrModele];
+		for (int i = 0; i < nrModele; i++)
+		{
+			f.read((char*)&this->pret[i], sizeof(float));
+		}
+	}
+
 
 };
 int Microunde::garantie = 2;
-
 
 
 void afisareVanzari(const MasinaSpalat& m) {
@@ -562,6 +658,7 @@ void afisareVanzari(const MasinaSpalat& m) {
 			cout << m.luniVanzari[i] << ", ";
 
 		}
+
 }
 
 float calculPretMediu(const Microunde& micro) {
@@ -679,8 +776,8 @@ public:
 		else
 			for (int i = 0; i < nrFrigidere; i++)
 				cout << frigider[i];
-		cout << "Mai are de asemenea microunde" << microunde << endl;
-		cout<<" si masini de spalat" << masinaSpalat<<endl;
+		cout << "Mai are de asemenea microunde " <<endl<< microunde << endl;
+		cout<<" si masini de spalat " <<endl << masinaSpalat<<endl;
 
 	}
 
@@ -692,6 +789,51 @@ public:
 
 	bool operator>(MagazinElectrocasnice magazin) {
 		return this->nrFrigidere > magazin.nrFrigidere;
+	}
+
+	friend ostream& operator<<(ostream& out, const MagazinElectrocasnice& me) {
+		out << "ID:" << me.id << endl;
+		out << "Nume magazin: " << me.numeMagazin << endl;
+		out << endl << "Masina de spalat: " << me.masinaSpalat << endl;
+		out << "Cuptor cu microunde: " << me.microunde << endl;
+		out << "Numar frigidere: " << me.nrFrigidere<<endl;
+		if (me.nrFrigidere == 0)
+			out << "Niciun frigider.";
+		else {
+			out << "Frigiderele: ";
+			for (int i = 0; i < me.nrFrigidere; i++)
+				out << me.frigider[i] << "\n";
+		}
+		
+		return out;
+	}
+
+	friend istream& operator>>(istream& in, MagazinElectrocasnice& me) {
+		cout << "Nume magazin: ";
+		in >> me.numeMagazin;
+		cout << "Masina de spalat: ";
+		in >> me.masinaSpalat;
+		cout << "Cuptor cu microunde: ";
+		in >> me.microunde;
+		cout << "Numar frigidere: ";
+		in >> me.nrFrigidere;
+		if (me.frigider != NULL) {
+			delete[]me.frigider;
+		}
+		me.frigider = new Frigider[me.nrFrigidere];
+		for (int i = 0; i < me.nrFrigidere; i++) {
+			cout << "Frigiderul " << i + 1 << ": ";
+			in >> me.frigider[i];
+		}
+		cout << endl;
+		return in;
+	}
+
+	friend ofstream& operator<<(ofstream& out, const MagazinElectrocasnice& me) {
+		out <<me.numeMagazin <<endl<<me.masinaSpalat<<endl<<me.microunde<<endl<< me.nrFrigidere<<endl;
+		for (int i = 0; i < me.nrFrigidere; i++)
+			out << me.frigider[i] << " ";
+		return out;
 	}
 
 
@@ -879,12 +1021,12 @@ void main() {
 	micro5=micro2;
 	micro5.afisare();
 
-	cin >> micro3;
+	/*cin >> micro3;
 	cout << micro3 << endl;
 
 	float pretMediu = calculPretMediu(micro3);
 	cout << "Pretul mediu al microundelor este: " << pretMediu << endl;
-	cout << "Primul microunde are pretul de: "<<micro3[0] << endl;
+	cout << "Primul microunde are pretul de: "<<micro3[0] << endl;*/
 
 	//int nrMicro;
 	//cout << "Introduceti numarul de cuptoare cu microunde: ";
@@ -951,16 +1093,61 @@ void main() {
 	cout << "Frigiderul 3: " << endl << me2.getFrigider()[2] << endl;
 
 	if (me1 > me2) {
-		cout << "Magazinul 1 are mai multe frigidere decat magazinul 2";
+		cout << "Magazinul 1 are mai multe frigidere decat magazinul 2"<<endl;
 	}
 	else {
-		cout << "Magazinul 2 are mai multe frigidere decat magazinul 1";
+		cout << "Magazinul 2 are mai multe frigidere decat magazinul 1"<<endl;
 	}
 	
 
 	delete[]vectF;
 	
-	
-	
 
+	/*ifstream m("MasiniDeSpalat.txt", ios::in);
+	MasinaSpalat m1;
+	m >> m1;
+	cout << m1;
+	m.close();*/
+	
+	/*ofstream mic("microunde.txt", ios::out);
+	cin >> micro2;
+	mic << micro2;
+	mic.close();*/
+
+	/*ifstream mic2("microunde.txt", ios::in);
+	Microunde mCitit;
+	mic2 >> mCitit;
+	cout << mCitit;
+	mic2.close();*/
+
+	//Frigider f1;
+	//cin >> f1;
+	//fstream fisfrigider("frigidere.bin", ios::binary | ios::out);
+	//f1.scriereBinarFrigider(fisfrigider);
+	//fisfrigider.close();
+
+	/*fstream fis2frigider("frigidere.bin", ios::binary | ios::in);
+	Frigider fCitit;
+	fCitit.citireBinarFrigider(fis2frigider);
+	cout << fCitit;
+	fis2frigider.close();*/
+
+	/*Microunde mic1;
+	cin >> mic1;
+	fstream fismic1("Microunde.bin", ios::out | ios::binary);
+	mic1.scriereBinarMicrounde(fismic1);
+	fismic1.close();*/
+
+	/*fstream fismic2("Microunde.bin", ios::in | ios::binary);
+	Microunde micCitit;
+	micCitit.citireBinarMicrounde(fismic2);
+	cout << micCitit;
+	fismic2.close();*/
+
+	ofstream fismag("magazinElectrocasnice.txt", ios::out);
+	MagazinElectrocasnice magazin1;
+	cin >> magazin1;
+	fismag << magazin1;
+	fismag.close();
+	
 }
