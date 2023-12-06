@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -57,7 +58,7 @@ public:
 				delete[]this->dimensiuneRaft;
 			}
 			this->dimensiuneRaft = new float[this->nrRafturi];
-			for (int i= 0; i < this->nrRafturi; i++)
+			for (int i = 0; i < this->nrRafturi; i++)
 				this->dimensiuneRaft[i] = f.dimensiuneRaft[i];
 
 		}
@@ -141,7 +142,7 @@ public:
 
 	Frigider operator+(Frigider f) {
 		Frigider aux = *this;
-		aux.nrRafturi=this->nrRafturi + f.nrRafturi;
+		aux.nrRafturi = this->nrRafturi + f.nrRafturi;
 		if (aux.dimensiuneRaft != NULL)
 			delete[]aux.dimensiuneRaft;
 		aux.dimensiuneRaft = new float[aux.nrRafturi];
@@ -179,52 +180,53 @@ public:
 		return in;
 	}
 
-	 void scriereBinarFrigider(fstream& f) {
+	void scriereBinarFrigider(fstream& f) {
 		int lungimeModel = model.length();
 		f.write((char*)&lungimeModel, sizeof(int));
 		f.write(model.c_str(), lungimeModel + 1);
 		f.write((char*)&this->pret, sizeof(float));
 		f.write((char*)&this->nrRafturi, sizeof(int));
 		for (int i = 0; i < nrRafturi; i++) {
-			f.write((char*)&this->dimensiuneRaft[i], sizeof(float)) ;
+			f.write((char*)&this->dimensiuneRaft[i], sizeof(float));
 		}
 	}
 
-	 void citireBinarFrigider(fstream& f) {
-		 int lungime;
-		 f.read((char*)&lungime, sizeof(int));
-		 char* bufferModel = new char[lungime + 1];
-		 f.read(bufferModel, lungime + 1);
-		 this->model = bufferModel;
-		 delete[]bufferModel;
-		 f.read((char*)&this->pret, sizeof(float));
-		 f.read((char*)&this->nrRafturi, sizeof(int));
-		 if (this->dimensiuneRaft != NULL) {
-			 delete[]this->dimensiuneRaft;
-		 }
-		 this->dimensiuneRaft = new float[nrRafturi];
-		 for (int i = 0; i < nrRafturi; i++)
-		 {
-			 f.read((char*)&this->dimensiuneRaft[i], sizeof(float));
-		 }
-	 }
+	void citireBinarFrigider(fstream& f) {
+		int lungime;
+		f.read((char*)&lungime, sizeof(int));
+		char* bufferModel = new char[lungime + 1];
+		f.read(bufferModel, lungime + 1);
+		this->model = bufferModel;
+		delete[]bufferModel;
+		f.read((char*)&this->pret, sizeof(float));
+		f.read((char*)&this->nrRafturi, sizeof(int));
+		if (this->dimensiuneRaft != NULL) {
+			delete[]this->dimensiuneRaft;
+		}
+		this->dimensiuneRaft = new float[nrRafturi];
+		for (int i = 0; i < nrRafturi; i++)
+		{
+			f.read((char*)&this->dimensiuneRaft[i], sizeof(float));
+		}
+	}
 
 
 };
 string Frigider::clasaEnergetica = "A+";
 
 ostream& operator<<(ostream& out, const Frigider& f) {
-	out << "ID: " << f.id<<endl;
-	out << "Pret: " << f.pret<<endl;
-	out << "Model: " << f.model<<endl;
+	out << "ID: " << f.id << endl;
+	out << "Pret: " << f.pret << endl;
+	out << "Model: " << f.model << endl;
 	out << "Numar rafturi: " << f.nrRafturi << endl;
 	if (f.nrRafturi == 0)
 		out << "Niciun raft";
 	else
-	{		out << "Dimensiuni rafturi: ";
-	for (int i = 0; i < f.nrRafturi; i++)
-		out << f.dimensiuneRaft[i] << ", ";
-}
+	{
+		out << "Dimensiuni rafturi: ";
+		for (int i = 0; i < f.nrRafturi; i++)
+			out << f.dimensiuneRaft[i] << ", ";
+	}
 	out << endl;
 	out << "Clasa energetica: " << f.clasaEnergetica << endl;
 	return out;
@@ -255,7 +257,7 @@ public:
 		this->luniVanzari = NULL;
 	}
 
-	MasinaSpalat(int anNou,string model, int RPM, int nrVanzari, string* luniVanzari) :anFabricatie(anNou) {
+	MasinaSpalat(int anNou, string model, int RPM, int nrVanzari, string* luniVanzari) :anFabricatie(anNou) {
 		this->model = model;
 		this->RPM = RPM;
 		this->nrVanzari = nrVanzari;
@@ -359,7 +361,7 @@ public:
 			auxLuniVanzari[i] = m.luniVanzari[i - this->nrVanzari];
 		this->nrVanzari = auxNrVanzari;
 		if (this->luniVanzari != NULL)
-			delete[]this -> luniVanzari;
+			delete[]this->luniVanzari;
 		this->luniVanzari = auxLuniVanzari;
 		return *this;
 	}
@@ -394,9 +396,9 @@ public:
 		return in;
 	}
 
-	friend ostream& operator<<(ostream& out, const MasinaSpalat& m){
-		out << "Model: " << m.model<<endl;
-		out << "RPM: " << m.RPM<<endl;
+	friend ostream& operator<<(ostream& out, const MasinaSpalat& m) {
+		out << "Model: " << m.model << endl;
+		out << "RPM: " << m.RPM << endl;
 		out << "Numar vanzari: " << m.nrVanzari << endl;
 		if (m.nrVanzari == 0)
 			out << "Nicio vanzare";
@@ -410,7 +412,7 @@ public:
 		out << "An fabricatie: " << m.anFabricatie << endl;
 		out << "TVA: " << m.TVA << endl;
 		return out;
-}
+	}
 
 	friend ifstream& operator>>(ifstream& in, MasinaSpalat& m);
 
@@ -423,13 +425,13 @@ ifstream& operator>>(ifstream& in, MasinaSpalat& m) {
 	in >> m.nrVanzari;
 	if (m.luniVanzari != NULL)
 		delete[]m.luniVanzari;
-m.luniVanzari = new string[m.nrVanzari];
-	for (int i = 0; i < m.nrVanzari; i++) 
+	m.luniVanzari = new string[m.nrVanzari];
+	for (int i = 0; i < m.nrVanzari; i++)
 		in >> m.luniVanzari[i];
 	return in;
 
 }
-	
+
 class Microunde {
 private:
 	const int id;
@@ -573,8 +575,8 @@ public:
 
 	friend ostream& operator<<(ostream& out, const Microunde& mic) {
 		out << "ID: " << mic.id << endl;
-		out << "Brand: " << mic.brand<<endl;
-		out << "Putere: " << mic.putere<<endl;
+		out << "Brand: " << mic.brand << endl;
+		out << "Putere: " << mic.putere << endl;
 		out << "Numar de modele: " << mic.nrModele << endl;
 		if (mic.nrModele == 0)
 			out << "Nu exista modele";
@@ -585,10 +587,10 @@ public:
 				out << mic.pret[i] << ", ";
 		}
 		out << endl;
-		out << "Garantie: " << mic.garantie<<" ani" << endl;
+		out << "Garantie: " << mic.garantie << " ani" << endl;
 		return out;
-		}
-	
+	}
+
 
 	friend float calculPretMediu(const Microunde& micro);
 
@@ -606,17 +608,17 @@ public:
 	}
 
 	friend ofstream& operator<<(ofstream& out, const Microunde& mic) {
-		out<<endl<< mic.brand << endl << mic.putere << endl << mic.nrModele<<endl ;
-			for (int i = 0; i < mic.nrModele; i++)
-				out << mic.pret[i] << " ";
-			out << endl;
-			return out;
+		out << endl << mic.brand << endl << mic.putere << endl << mic.nrModele << endl;
+		for (int i = 0; i < mic.nrModele; i++)
+			out << mic.pret[i] << " ";
+		out << endl;
+		return out;
 	}
 
 	void scriereBinarMicrounde(fstream& f) {
 		int lungimeBrand = brand.length();
 		f.write((char*)&lungimeBrand, sizeof(int));
-		f.write(brand.c_str(), lungimeBrand+ 1);
+		f.write(brand.c_str(), lungimeBrand + 1);
 		f.write((char*)&this->putere, sizeof(int));
 		f.write((char*)&this->nrModele, sizeof(int));
 		for (int i = 0; i < nrModele; i++) {
@@ -744,7 +746,7 @@ public:
 		}
 	}
 
-	int getNrFrigidere(){
+	int getNrFrigidere() {
 		return this->nrFrigidere;
 	}
 
@@ -776,8 +778,8 @@ public:
 		else
 			for (int i = 0; i < nrFrigidere; i++)
 				cout << frigider[i];
-		cout << "Mai are de asemenea microunde " <<endl<< microunde << endl;
-		cout<<" si masini de spalat " <<endl << masinaSpalat<<endl;
+		cout << "Mai are de asemenea microunde " << endl << microunde << endl;
+		cout << " si masini de spalat " << endl << masinaSpalat << endl;
 
 	}
 
@@ -796,7 +798,7 @@ public:
 		out << "Nume magazin: " << me.numeMagazin << endl;
 		out << endl << "Masina de spalat: " << me.masinaSpalat << endl;
 		out << "Cuptor cu microunde: " << me.microunde << endl;
-		out << "Numar frigidere: " << me.nrFrigidere<<endl;
+		out << "Numar frigidere: " << me.nrFrigidere << endl;
 		if (me.nrFrigidere == 0)
 			out << "Niciun frigider.";
 		else {
@@ -804,7 +806,7 @@ public:
 			for (int i = 0; i < me.nrFrigidere; i++)
 				out << me.frigider[i] << "\n";
 		}
-		
+
 		return out;
 	}
 
@@ -830,7 +832,7 @@ public:
 	}
 
 	friend ofstream& operator<<(ofstream& out, const MagazinElectrocasnice& me) {
-		out <<me.numeMagazin <<endl<<me.masinaSpalat<<endl<<me.microunde<<endl<< me.nrFrigidere<<endl;
+		out << me.numeMagazin << endl << me.masinaSpalat << endl << me.microunde << endl << me.nrFrigidere << endl;
 		for (int i = 0; i < me.nrFrigidere; i++)
 			out << me.frigider[i] << " ";
 		return out;
@@ -838,6 +840,188 @@ public:
 
 
 };
+
+class FrigiderSmart :public Frigider {
+private:
+	char* numeTehnologie;
+	int temperaturaMinima;
+public:
+	FrigiderSmart() :Frigider() {
+		this->numeTehnologie = new char[strlen("Control temperatura de la distanta") + 1];
+		strcpy_s(this->numeTehnologie, strlen("Control temperatura de la distanta") + 1, "Control temperatura de la distanta");
+		this->temperaturaMinima = 0;
+	}
+
+	FrigiderSmart(int idNou, float pret, string model, int temperaturaMinima, const char* numeTehnologie) :Frigider(idNou, pret, model) {
+		this->temperaturaMinima = temperaturaMinima;
+		this->numeTehnologie = new char[strlen(numeTehnologie) + 1];
+		strcpy_s(this->numeTehnologie, strlen(numeTehnologie) + 1, numeTehnologie);
+	}
+
+	FrigiderSmart(int idNou, float pret, string model, int nrRafturi, float* dimensiuneRaft, int temperaturaMinima, const char* numeTehnologie) :Frigider(idNou, pret, model, nrRafturi, dimensiuneRaft) {
+		this->temperaturaMinima = temperaturaMinima;
+		this->numeTehnologie = new char[strlen(numeTehnologie) + 1];
+		strcpy_s(this->numeTehnologie, strlen(numeTehnologie) + 1, numeTehnologie);
+	}
+
+	FrigiderSmart(const FrigiderSmart& fs) :Frigider(fs) {
+		this->temperaturaMinima = fs.temperaturaMinima;
+		this->numeTehnologie = new char[strlen(fs.numeTehnologie) + 1];
+		strcpy_s(this->numeTehnologie, strlen(fs.numeTehnologie) + 1, fs.numeTehnologie);
+
+	}
+
+	friend ostream& operator<<(ostream& out, const FrigiderSmart& fs) {
+		out << endl;
+		out << (Frigider)fs;
+		out << "Nume tehnologie: " << fs.numeTehnologie << " ";
+		out << "\nTemperatura minima: " << fs.temperaturaMinima << " grade Celsius." << endl;
+		return out;
+
+	}
+
+	FrigiderSmart operator=(const FrigiderSmart& fs) {
+		if (this != &fs) {
+			Frigider::operator=(fs);
+			this->temperaturaMinima = fs.temperaturaMinima;
+			if (this->numeTehnologie) {
+				delete[]this->numeTehnologie;
+			}
+			this->numeTehnologie = new char[strlen(fs.numeTehnologie) + 1];
+			strcpy_s(this->numeTehnologie, strlen(fs.numeTehnologie) + 1, fs.numeTehnologie);
+		}
+		return *this;
+	}
+
+	~FrigiderSmart() {
+		if (this->numeTehnologie) {
+			delete[]this->numeTehnologie;
+		}
+	}
+
+	void setNumeTehnologie(const char* numeTehnologie) {
+		if (strlen(numeTehnologie) > 0) {
+			if (this->numeTehnologie) {
+				delete[]this->numeTehnologie;
+			}
+			this->numeTehnologie = new char[strlen(numeTehnologie) + 1];
+			strcpy_s(this->numeTehnologie, strlen(numeTehnologie) + 1, numeTehnologie);	
+		}
+	}
+
+	const char* getNumeTehnologie() {
+		return this->numeTehnologie;
+	}
+
+	void setTemperaturaMinima(int temperaturaMinima) {
+		this->temperaturaMinima = temperaturaMinima;
+	}
+
+	int getTemperaturaMinima() {
+		return this->temperaturaMinima;
+	}
+
+
+};
+
+
+class MasinaSpalatCuUscare :public MasinaSpalat {
+private:
+	char* tipUscare;
+	int capacitate;
+public:
+	MasinaSpalatCuUscare() :MasinaSpalat(2023, "Bosch", 1600) {
+		this->capacitate = 4;
+		this->tipUscare = new char[strlen("Uscare cu aer cald")+1];
+		strcpy_s(this->tipUscare, strlen("Uscare cu aer cald") + 1, "Uscare cu aer cald");
+	}
+
+	MasinaSpalatCuUscare(int capacitate, const char* tipUscare) :MasinaSpalat() {
+		this->capacitate = capacitate;
+		this->tipUscare = new char[strlen(tipUscare) + 1];
+		strcpy_s(this->tipUscare, strlen(tipUscare) + 1, tipUscare);
+	}
+
+	MasinaSpalatCuUscare(int anNou, string model, int RPM, int nrVanzari, string* luniVanzari, int capacitate, const char* tipUscare) :MasinaSpalat(anNou, model, RPM, nrVanzari, luniVanzari) {
+		this->capacitate = capacitate;
+		this->tipUscare = new char[strlen(tipUscare) + 1];
+		strcpy_s(this->tipUscare, strlen(tipUscare) + 1, tipUscare);
+	}
+
+	MasinaSpalatCuUscare(const MasinaSpalatCuUscare& msu):MasinaSpalat(msu) {
+		this->capacitate = msu.capacitate;
+		this->tipUscare = new char[strlen(msu.tipUscare) + 1];
+		strcpy_s(this->tipUscare, strlen(msu.tipUscare) + 1, msu.tipUscare);
+	}
+
+	MasinaSpalatCuUscare operator=(const MasinaSpalatCuUscare& msu) {
+		if (this != &msu) {
+			MasinaSpalat::operator=(msu);
+			this->capacitate = msu.capacitate;
+			if (this->tipUscare) {
+				delete[]this->tipUscare;
+			}
+			this->tipUscare = new char[strlen(msu.tipUscare) + 1];
+			strcpy_s(this->tipUscare, strlen(msu.tipUscare) + 1, msu.tipUscare);
+		}
+		return *this;
+	}
+
+	~MasinaSpalatCuUscare() {
+		if (this->tipUscare) {
+			delete[]this->tipUscare;
+		}
+	}
+
+	void setTipUscare(const char* tipUscare) {
+		if (strlen(tipUscare) > 0) {
+			if (this->tipUscare) {
+				delete[]this->tipUscare;
+			}
+			this->tipUscare = new char[strlen(tipUscare) + 1];
+			strcpy_s(this->tipUscare, strlen(tipUscare) + 1, tipUscare);
+		}
+	}
+
+	const char* getTipUscare() {
+		return this->tipUscare;
+	}
+
+	void setCapacitate(int capacitate) {
+		this->capacitate = capacitate;
+	}
+
+	int getCapacitate() {
+		return this->capacitate;
+	}
+
+
+	friend ostream& operator<<(ostream& out, const MasinaSpalatCuUscare& msu) {
+		out << endl;
+		out << (MasinaSpalat)msu;
+		out << "Tip uscare: " << msu.tipUscare << " ";
+		out << "\nCapacitate de incarcare: " << msu.capacitate << " kg." << endl;
+		return out;
+
+	}
+
+	friend istream& operator>>(istream& in, MasinaSpalatCuUscare& msu) {
+		in >> (MasinaSpalat&)msu;
+		cout << "Capacitate de incarcare: ";
+		in >> msu.capacitate;
+		if (msu.tipUscare) {
+			delete[]msu.tipUscare;
+		}
+		cout << "Tip uscare: ";
+		char buffer[30];
+		in >> buffer;
+		msu.tipUscare = new char[strlen(buffer) + 1];
+		strcpy_s(msu.tipUscare, strlen(buffer) + 1, buffer);
+		return in;
+	}
+
+};
+
 
 
 void main() {
@@ -875,7 +1059,7 @@ void main() {
 	cout << frigider3.getDimensiuneRaft(0) << endl;
 
 	Frigider frigider5;
-	frigider5=frigider2;
+	frigider5 = frigider2;
 	frigider5.afisare();
 
 	Frigider rezultat = frigider3 + frigider4;
@@ -918,7 +1102,7 @@ void main() {
 	luniVanz[3] = "iulie";
 	luniVanz[4] = "octombrie";
 
-	MasinaSpalat masina3(2023,"Samsung", 1300, 5, luniVanz);
+	MasinaSpalat masina3(2023, "Samsung", 1300, 5, luniVanz);
 	masina3.afisare();
 
 	MasinaSpalat masina4(masina3);
@@ -938,15 +1122,15 @@ void main() {
 
 	delete[]vectorMasina;
 
-	cout << masina3.getLuniVanzari(3)<<endl ;
+	cout << masina3.getLuniVanzari(3) << endl;
 	masina3.afisare();
 	cout << endl;
 
 	MasinaSpalat masina5;
-	masina5=masina2;
+	masina5 = masina2;
 	masina5.afisare();
 
-	masina3+=masina4;
+	masina3 += masina4;
 	masina3.afisare();
 
 	MasinaSpalat masina6;
@@ -954,11 +1138,11 @@ void main() {
 	masina6.afisare();
 
 	if (masina6 > masina3)
-		cout << "Masina 6 are mai multe RPM decat masina 3"<<endl;
+		cout << "Masina 6 are mai multe RPM decat masina 3" << endl;
 	else
-		cout << "Masina 3 are mai multe RPM decat masina 6"<<endl;
-	cout << "Masina 3: " << masina3.getRPM()<<" RPM"<<endl;
-	cout << "Masina 6: " << masina6.getRPM()<<" RPM"<<endl;
+		cout << "Masina 3 are mai multe RPM decat masina 6" << endl;
+	cout << "Masina 3: " << masina3.getRPM() << " RPM" << endl;
+	cout << "Masina 6: " << masina6.getRPM() << " RPM" << endl;
 
 	afisareVanzari(masina3);
 	cout << endl;
@@ -1018,7 +1202,7 @@ void main() {
 	cout << micro2.getPret(2) << endl;
 
 	Microunde micro5;
-	micro5=micro2;
+	micro5 = micro2;
 	micro5.afisare();
 
 	/*cin >> micro3;
@@ -1070,7 +1254,7 @@ void main() {
 
 	MagazinElectrocasnice me1;
 	me1.afisare();
-	
+
 	Frigider* frigidere = new Frigider[2]{ frigider3,frigider4 };
 	MagazinElectrocasnice me2(1, "Flanco", 2, frigidere, masina3, micro2);
 	me2.afisare();
@@ -1079,36 +1263,36 @@ void main() {
 	me3 = me2;
 	me3.afisare();
 
-	cout<<"Id magazin: "<<me2.getId() << endl;
+	cout << "Id magazin: " << me2.getId() << endl;
 	me2.setNumeMagazin("Altex");
-	cout<<"Nume magazin: "<<me2.getNumeMagazin() << endl;
+	cout << "Nume magazin: " << me2.getNumeMagazin() << endl;
 	me2.setMasinaSpalat(masina2);
-	cout<<"Masina de spalat: "<<endl<<me2.getMasinaSpalat() << endl;
+	cout << "Masina de spalat: " << endl << me2.getMasinaSpalat() << endl;
 	me2.setMicrounde(micro3);
-	cout<<"Cuptorul cu microunde: "<<endl<<me2.getMicrounde() << endl;
+	cout << "Cuptorul cu microunde: " << endl << me2.getMicrounde() << endl;
 	Frigider* vectF = new Frigider[3]{ frigider2,frigider3,frigider4 };
-	me2.setNrFrigidere(3,vectF);
-	cout << "Frigiderul 1: " << endl<<me2.getFrigider()[0] << endl;
+	me2.setNrFrigidere(3, vectF);
+	cout << "Frigiderul 1: " << endl << me2.getFrigider()[0] << endl;
 	cout << "Frigiderul 2: " << endl << me2.getFrigider()[1] << endl;
 	cout << "Frigiderul 3: " << endl << me2.getFrigider()[2] << endl;
 
 	if (me1 > me2) {
-		cout << "Magazinul 1 are mai multe frigidere decat magazinul 2"<<endl;
+		cout << "Magazinul 1 are mai multe frigidere decat magazinul 2" << endl;
 	}
 	else {
-		cout << "Magazinul 2 are mai multe frigidere decat magazinul 1"<<endl;
+		cout << "Magazinul 2 are mai multe frigidere decat magazinul 1" << endl;
 	}
-	
+	cout << endl;
 
 	delete[]vectF;
-	
+
 
 	/*ifstream m("MasiniDeSpalat.txt", ios::in);
 	MasinaSpalat m1;
 	m >> m1;
 	cout << m1;
 	m.close();*/
-	
+
 	/*ofstream mic("microunde.txt", ios::out);
 	cin >> micro2;
 	mic << micro2;
@@ -1144,10 +1328,65 @@ void main() {
 	cout << micCitit;
 	fismic2.close();*/
 
-	ofstream fismag("magazinElectrocasnice.txt", ios::out);
+	/*ofstream fismag("magazinElectrocasnice.txt", ios::out);
 	MagazinElectrocasnice magazin1;
 	cin >> magazin1;
 	fismag << magazin1;
-	fismag.close();
+	fismag.close();*/
+
+	FrigiderSmart fs1;
+	cout << fs1;
+
+	FrigiderSmart fs2(10, 2499.99, "Gorenje", 3, "Ecran tactil integrat pe usa");
+	cout << fs2;
+
+	fs2.setNumeTehnologie("Ajustare temperatura din aplicatie mobila");
+	cout << "\nNume tehnologie actualizat: " << fs2.getNumeTehnologie() << endl;
+	fs2.setTemperaturaMinima(2);
+	cout << "Temperatura minima actualizata: " << fs2.getTemperaturaMinima() << endl;
+	cout << fs2;
+
+	float* dimRafturi;
+	dimRafturi = new float[4];
+	dimRafturi[0] = 68.55;
+	dimRafturi[1] = 80.58;
+	dimRafturi[2] = 71.43;
+	dimRafturi[3] = 75;
+	FrigiderSmart fs3(11, 2350, "Whirlpool", 4, dimRafturi, 4, "Monitorizare stoc alimente");
+	cout << fs3;
+
 	
+	FrigiderSmart fs4(fs3);
+	cout << fs4;
+
+	FrigiderSmart fs5;
+	fs5 = fs3;
+	cout << fs5;
+
+	MasinaSpalatCuUscare msu1;
+	cout << msu1;
+
+	MasinaSpalatCuUscare msu2(5, "Uscare prin condensare");
+	cout << msu2;
+
+	string* luniMSU;
+	luniMSU = new string[4]{ "ianuarie","martie","septembrie","decembrie"};
+	MasinaSpalatCuUscare msu3(2022, "Whirlpool", 1400, 4, luniMSU, 8, "Uscare cu pompa de caldura");
+	cout << msu3;
+
+	msu3.setTipUscare("Uscare cu aer cald");
+	cout << "\nTip uscare actualizat: " << msu3.getTipUscare() << endl;
+	msu3.setCapacitate(9);
+	cout << "Capacitate de incarcare actualizata: " << msu3.getCapacitate() << endl;
+
+	MasinaSpalatCuUscare msu4;
+	cin >> msu4;
+	cout << msu4;
+
+	MasinaSpalatCuUscare msu5(msu3);
+	cout << msu5;
+
+	MasinaSpalatCuUscare msu6;
+	msu6 = msu3;
+	cout << msu6;
 }
